@@ -1,0 +1,856 @@
+<!doctype html><html lang="it"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Lavagna"><meta name="theme-color" content="#EDF0F3" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#10141A" media="(prefers-color-scheme: dark)"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" type="image/png" href="icon-192.png"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Lavagna schemi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+/* Layout: campo grande a sinistra (lavagna), elenco fasi a destra; su telefono tutto in colonna */
+:root{
+  --bg:#EDF0F3; --surface:#FFFFFF; --ink:#18212E; --muted:#5A6576; --rule:#D3D9E1;
+  --floor:#EAD9BB; --paint:#DEC59B; --line:#6E5130; --trail:#1F1B16;
+  --team:#1E4F9A; --team-ink:#FFFFFF; --ball:#D9621F; --hi:#D9621F; --hi-soft:#F7E3D6; --def:#B8322E;
+  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10141A; --surface:#19202A; --ink:#E7EBF1; --muted:#9AA5B5; --rule:#2B3441;
+  --floor:#2A241C; --paint:#372D20; --line:#CBB088; --trail:#F2E7D4;
+  --team:#5B8FE6; --team-ink:#0D1420; --ball:#F08A44; --hi:#F08A44; --hi-soft:#3A2A1E; --def:#F27067; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10141A; --surface:#19202A; --ink:#E7EBF1; --muted:#9AA5B5; --rule:#2B3441;
+  --floor:#2A241C; --paint:#372D20; --line:#CBB088; --trail:#F2E7D4;
+  --team:#5B8FE6; --team-ink:#0D1420; --ball:#F08A44; --hi:#F08A44; --hi-soft:#3A2A1E; --def:#F27067; color-scheme:dark}
+
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px;padding-block:24px 40px;display:grid;gap:20px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+.eyebrow{font-family:var(--f-display);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-size:14px;margin:0}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(40px,7vw,60px);line-height:.95;margin:2px 0 0;text-wrap:balance}
+.pick{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+select{font:600 16px var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:8px 10px;min-width:180px}
+
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:20px;align-items:start}
+@media (max-width:840px){.grid{grid-template-columns:minmax(0,1fr)}}
+.board{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:14px;display:grid;gap:12px;min-width:0}
+svg.court{width:100%;height:auto;display:block;border-radius:8px}
+.floor{fill:var(--floor)} .paint{fill:var(--paint)}
+.cl{fill:none;stroke:var(--line);stroke-width:.06}
+.cl.dash{stroke-dasharray:.25 .2}
+.rim{fill:none;stroke:var(--hi);stroke-width:.07}
+.tr{fill:none;stroke:var(--trail);stroke-width:.075;stroke-linecap:round;stroke-linejoin:round;transition:opacity .25s}
+.tr.pass{stroke-dasharray:.22 .16}
+.mk{fill:var(--trail)}
+.tr-g.later{opacity:.3}
+.pl circle{fill:var(--team);stroke:var(--surface);stroke-width:.07}
+.pl text{fill:var(--team-ink);font:700 .46px var(--f-display);text-anchor:middle;dominant-baseline:central}
+.ball{fill:var(--ball);stroke:var(--trail);stroke-width:.035}
+
+.now{display:flex;gap:10px;align-items:baseline;min-height:2.6em}
+.now b{font-family:var(--f-display);font-size:22px;color:var(--hi);font-variant-numeric:tabular-nums;flex:none}
+.now span{font-size:15px}
+
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:600 14px var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:8px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+button:hover{border-color:var(--muted)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--hi);outline-offset:2px}
+button.primary{background:var(--ink);color:var(--surface);border-color:var(--ink);min-width:104px;justify-content:center}
+button svg{width:16px;height:16px;fill:currentColor}
+.tr.shot{stroke:var(--hi);stroke-dasharray:.05 .13}
+.mks{fill:var(--hi)}
+.legend .tr.shot{stroke:var(--hi);stroke-dasharray:2 3}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{padding:6px 10px;font-size:13px;border-radius:999px}
+.chips button[aria-pressed="true"]{background:var(--hi-soft);color:var(--hi);border-color:var(--hi)}
+.vdesc{font-size:14px;color:var(--ink);margin:8px 0 14px;padding-bottom:12px;border-bottom:1px solid var(--rule)}
+.df circle{fill:var(--surface);stroke:var(--def);stroke-width:.08}
+.df text{fill:var(--def);font:700 .3px var(--f-display);text-anchor:middle;dominant-baseline:central}
+.lgd{fill:var(--surface);stroke:var(--def);stroke-width:1.6}
+#bDef[aria-pressed="true"]{background:var(--hi-soft);color:var(--hi);border-color:var(--hi)}
+.seg.modes{display:flex;flex-wrap:wrap;width:100%}
+.seg.modes button{flex:1 1 auto;padding:8px 10px;font-size:13px}
+.chips button.match-off::after{content:"";width:7px;height:7px;border-radius:50%;background:var(--def);display:inline-block;margin-left:6px}
+.locked .seg,.locked .chips{display:none}
+.locked .vdesc{margin-top:0}
+.locked button{cursor:default}
+.lock{display:none;text-transform:none;letter-spacing:0;font-family:var(--f-body);font-weight:600;font-size:12px;color:var(--muted);background:var(--bg);border:1px solid var(--rule);border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:1px}
+
+#modeSeg button[aria-pressed="true"],#varChips button[aria-pressed="true"]{font-weight:700}
+.head-r .seg{display:flex}
+.head-r .seg button{flex:1 1 0;justify-content:center;white-space:nowrap;min-width:0;padding-inline:10px}
+.head-r{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;border-radius:0;padding:8px 14px}
+.seg button[aria-pressed="true"]{background:var(--hi-soft);color:var(--hi)}
+.ctl-r{display:inline-flex;gap:8px;margin-left:auto}
+#bSpeed{font-variant-numeric:tabular-nums;min-width:52px;justify-content:center}
+button.tog[aria-pressed="true"]{background:var(--hi-soft);color:var(--hi);border-color:var(--hi)}
+.follow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.flab{font-family:var(--f-display);font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:13px;color:var(--muted)}
+.fbtns{display:inline-flex;gap:6px}
+.fbtns button{width:34px;height:34px;padding:0;border-radius:50%;justify-content:center;font:700 16px var(--f-display);background:var(--surface);color:var(--team);border:2px solid var(--team)}
+.fbtns button[aria-pressed="true"]{background:var(--team);color:var(--team-ink)}
+.fhint{font-size:13px;color:var(--muted)}
+.pl{cursor:pointer}
+.pl,.df,.tr-g{transition:opacity .2s}
+.dim{opacity:.22}
+.tr-g.dim{opacity:.12}
+.pl.focus circle{stroke:var(--hi);stroke-width:.12}
+.df.focus circle{stroke-width:.13}
+.fp{fill:none;stroke:var(--team);stroke-width:.09;stroke-dasharray:.04 .16;stroke-linecap:round;opacity:.75}
+.legend .fp{stroke-width:2;stroke-dasharray:1 4}
+.legend-box summary{cursor:pointer;font-size:13px;color:var(--muted);font-weight:600;list-style-position:inside}
+.legend-box .legend{margin-top:8px}
+@media (max-width:600px){
+  .controls .lbl{display:none}
+  .controls{gap:6px}
+  .controls button{padding:9px 9px}
+  button.primary{min-width:50px}
+  #bSpeed{min-width:44px}
+  .ctl-r{gap:6px}
+  .now{min-height:0}
+  .now span{font-size:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .fhint{display:none}
+  .pl text{font-size:.56px}
+  .df text{font-size:.34px}
+}
+.tabbar,.sheet-head,.scrim{display:none}
+@media (max-width:840px){
+  .wrap{padding-block:16px 96px;gap:14px}
+  h1{font-size:40px}
+  header{align-items:flex-start}
+  .head-r{width:100%;flex-wrap:nowrap;align-items:flex-start}
+  .head-r .seg button{padding-block:10px}
+  .head-r .pick{flex:1 1 0;min-width:0}
+  select{min-width:0;width:100%}
+  .board{padding:10px;gap:8px}
+  aside#sheet{position:fixed;left:0;right:0;bottom:0;z-index:30;max-height:50vh;overflow:auto;border-radius:16px 16px 0 0;border-bottom:0;padding:0 16px calc(16px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .25s ease;box-shadow:0 -10px 30px -12px rgba(0,0,0,.4)}
+  aside#sheet.open{transform:none}
+  aside#sheet[data-sec="opts"] #secFasi,aside#sheet[data-sec="fasi"] #secOpts{display:none}
+  .sheet-head{display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);padding:12px 0 10px;margin-bottom:6px;border-bottom:1px solid var(--rule);z-index:1}
+  .sheet-head b{font-family:var(--f-display);font-size:20px}
+  .sheet-head button{padding:6px 12px}
+  .tabbar{display:flex;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:20;padding:8px 16px calc(8px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--rule);box-shadow:0 -6px 16px -10px rgba(0,0,0,.3)}
+  .tabbar button{flex:1 1 0;min-width:0;flex-direction:column;align-items:flex-start;gap:0;padding:8px 12px;border-radius:10px;background:var(--bg)}
+  .tabbar .tt{font-weight:700;font-size:14px}
+  .tabbar .ts{font-weight:400;font-size:12px;color:var(--hi);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  body.sheet-open .wrap{padding-bottom:60vh}
+  #secFasi>h2{display:none}
+  .scrim{display:block;position:fixed;inset:0;z-index:25;pointer-events:none}
+  .scrim.on{pointer-events:auto}
+}
+input[type=range]{width:100%;accent-color:var(--hi)}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend svg{width:38px;height:12px}
+.legend .tr{stroke:var(--muted);stroke-width:1.6}
+.legend .tr.pass{stroke-dasharray:4 3}
+.legend .mk{fill:var(--muted)}
+
+aside{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:14px;min-width:0}
+aside h2{font-family:var(--f-display);font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:14px;color:var(--muted);margin:0 0 8px}
+ol{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+li button{width:100%;text-align:left;align-items:flex-start;border:0;border-radius:10px;padding:10px;background:transparent;font-weight:400;gap:10px}
+li button:hover{background:var(--bg)}
+li .n{font-family:var(--f-display);font-weight:700;font-size:18px;line-height:1.2;color:var(--muted);width:20px;flex:none;font-variant-numeric:tabular-nums}
+li .t{display:block;font-weight:600;font-size:15px}
+li .d{display:block;font-size:14px;color:var(--muted);line-height:1.4;margin-top:2px}
+li.cur button{background:var(--hi-soft)}
+li.cur .n{color:var(--hi)}
+.note{font-size:13px;color:var(--muted);margin:12px 0 0;border-top:1px solid var(--rule);padding-top:10px}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <p class="eyebrow">Lavagna schemi</p>
+      <h1 id="playName">Trans</h1>
+    </div>
+    <div class="head-r">
+      <label class="pick" for="playSel">Schema
+        <select id="playSel"></select>
+      </label>
+      <div class="pick" id="sideBox"><span id="sideLbl">Primo passaggio a</span>
+        <div class="seg" role="group" aria-label="Lato dello schema">
+          <button id="sideR" aria-pressed="true">Destra</button>
+          <button id="sideL" aria-pressed="false">Sinistra</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="board" aria-label="Campo e animazione">
+      <svg class="court" id="court" viewBox="-7.9 -0.45 15.8 12.6" role="img" aria-label="Metà campo con i giocatori">
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.6" markerHeight="4.6" markerUnits="strokeWidth" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" class="mk"/>
+          </marker>
+          <marker id="ahs" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.6" markerHeight="4.6" markerUnits="strokeWidth" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" class="mks"/>
+          </marker>
+        </defs>
+        <rect class="floor" x="-7.9" y="-0.45" width="15.8" height="15"/>
+        <rect class="paint" x="-2.45" y="0" width="4.9" height="5.8"/>
+        <rect class="cl" x="-7.5" y="0" width="15" height="14"/>
+        <rect class="cl" x="-2.45" y="0" width="4.9" height="5.8"/>
+        <path class="cl" d="M-1.8 5.8 A1.8 1.8 0 0 0 1.8 5.8"/>
+        <path class="cl dash" d="M-1.8 5.8 A1.8 1.8 0 0 1 1.8 5.8"/>
+        <path class="cl" d="M-6.6 0 L-6.6 2.99 A6.75 6.75 0 0 0 6.6 2.99 L6.6 0"/>
+        <path class="cl" d="M-1.25 1.2 L-1.25 1.575 A1.25 1.25 0 0 0 1.25 1.575 L1.25 1.2"/>
+        <path class="cl" d="M-1.8 14 A1.8 1.8 0 0 1 1.8 14"/>
+        <line class="cl" x1="-0.9" y1="1.2" x2="0.9" y2="1.2" style="stroke-width:.1"/>
+        <circle class="rim" cx="0" cy="1.575" r=".225"/>
+        <g id="fpath"></g>
+        <g id="trails"></g>
+        <g id="defs"></g>
+        <g id="players"></g>
+        <circle class="ball" id="ball" r=".17"/>
+      </svg>
+
+      <div class="now" aria-live="polite"><b id="nowN">0</b><span id="nowT"></span></div>
+
+      <input type="range" id="scrub" min="0" max="1" step="0.01" value="0" aria-label="Posizione nell'animazione">
+
+      <div class="controls">
+        <button id="bRestart" title="Ricomincia" aria-label="Ricomincia"><svg viewBox="0 0 16 16"><path d="M3 2h2v12H3zM14 2v12L6 8z"/></svg><span class="lbl">Inizio</span></button>
+        <button id="bPrev" title="Fase precedente" aria-label="Fase precedente"><svg viewBox="0 0 16 16"><path d="M12 2v12L4 8z"/></svg><span class="lbl">Fase</span></button>
+        <button id="bPlay" class="primary" aria-label="Play"><svg viewBox="0 0 16 16" id="playIco"><path d="M4 2v12l10-6z"/></svg><span id="playLbl" class="lbl">Play</span></button>
+        <button id="bNext" title="Fase successiva" aria-label="Fase successiva"><span class="lbl">Fase</span><svg viewBox="0 0 16 16"><path d="M4 2v12l8-6z"/></svg></button>
+        <button id="bLoop" class="tog" aria-pressed="false" title="Ripeti la fase corrente" aria-label="Ripeti fase"><svg viewBox="0 0 16 16"><path d="M8 2.2a5.8 5.8 0 1 0 5.8 5.8h-1.9A3.9 3.9 0 1 1 8 4.1V6.3l3.2-3.1L8 0z"/></svg><span class="lbl">Ripeti fase</span></button>
+        <span class="ctl-r">
+          <button id="bDef" class="tog" aria-pressed="true" title="Mostra o nascondi i difensori" aria-label="Difesa"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="currentColor" stroke-width="1.6"/></svg><span class="lbl">Difesa</span></button>
+          <button id="bSpeed" title="Velocità" aria-label="Velocità">1×</button>
+        </span>
+      </div>
+
+      <div class="follow" role="group" aria-label="Segui un giocatore">
+        <span class="flab">Segui</span>
+        <span class="fbtns" id="followBtns"></span>
+        <span class="fhint" id="followHint">Tocca un giocatore per seguire solo lui</span>
+      </div>
+
+      <details class="legend-box" id="legendBox">
+        <summary>Legenda</summary>
+        <div class="legend">
+        <span><svg viewBox="0 0 38 12"><path class="tr" d="M2 6 H33" marker-end="url(#lah)"/></svg>Taglio / movimento</span>
+        <span><svg viewBox="0 0 38 12"><path class="tr pass" d="M2 6 H33" marker-end="url(#lah)"/></svg>Passaggio</span>
+        <span><svg viewBox="0 0 38 12"><path class="tr" d="M2 6 L6 2 L10 10 L14 2 L18 10 L22 2 L26 6 H33" marker-end="url(#lah)"/></svg>Palleggio</span>
+        <span><svg viewBox="0 0 38 12"><path class="tr" d="M2 6 H34 M34 1 V11"/></svg>Blocco</span>
+        <span><svg viewBox="0 0 38 12"><circle cx="19" cy="6" r="4.6" class="lgd"/></svg>Difensore (X)</span>
+        <span><svg viewBox="0 0 38 12"><path class="tr shot" d="M2 6 H33" marker-end="url(#lahs)"/></svg>Tiro</span>
+        <span><svg viewBox="0 0 38 12"><path class="fp" d="M2 6 H36"/></svg>Percorso completo di chi segui</span>
+        <svg width="0" height="0" style="position:absolute"><defs><marker id="lah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" markerUnits="strokeWidth" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="mk"/></marker><marker id="lahs" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" markerUnits="strokeWidth" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="mks"/></marker></defs></svg>
+        </div>
+      </details>
+    </section>
+
+    <aside id="sheet" aria-label="Opzioni">
+      <div class="sheet-head"><b id="sheetTitle">Difesa e lettura</b><button id="sheetClose" aria-label="Chiudi">Chiudi</button></div>
+      <div id="secOpts">
+      <div id="ctrlBox">
+        <h2>Cosa vuoi decidere?</h2>
+        <div class="seg modes" id="ctrlSeg" role="group" aria-label="Cosa vuoi decidere">
+          <button data-c="difesa">Come difende</button><button data-c="lettura">Come attacca</button>
+        </div>
+        <p class="vdesc" id="ctrlHint"></p>
+      </div>
+      <div id="modeBox">
+        <h2 id="modeH">Difesa sui blocchi</h2>
+        <div class="seg modes" id="modeSeg" role="group" aria-label="Difesa sui blocchi">
+          <button data-m="segue">Segue</button><button data-m="cambia">Cambia</button><button data-m="sotto">Passa sotto</button><button data-m="alto">Esce alto</button>
+        </div>
+        <p class="vdesc" id="modeHint"></p>
+      </div>
+      <div id="varBox" hidden>
+        <h2 id="varH">Lettura della difesa</h2>
+        <div class="chips" id="varChips" role="group" aria-label="Variante"></div>
+        <p class="vdesc" id="varDesc"></p>
+      </div>
+      </div>
+      <div id="secFasi">
+      <h2>Fasi dello schema</h2>
+      <ol id="phaseList"></ol>
+      <p class="note" id="playNote"></p>
+      </div>
+    </aside>
+  </div>
+  <nav class="tabbar" id="tabbar" aria-label="Opzioni">
+    <button data-sec="opts"><span class="tt">Difesa e lettura</span><span class="ts" id="tabOptsSub"></span></button>
+    <button data-sec="fasi"><span class="tt">Fasi</span><span class="ts" id="tabFasiSub"></span></button>
+  </nav>
+  <div class="scrim" id="scrim"></div>
+</div>
+
+<script>
+/* ===== Schemi: coordinate in metri (FIBA). x: -7.5 sinistra … 7.5 destra; y: 0 linea di fondo … 14 metà campo. Canestro in (0, 1.575). ===== */
+const PLAYS = [{
+  id:'trans', name:'Trans', mirror:true, sideLabel:'Palla sul lato',
+  note:'Lato forte = lato {dx} all\u2019inizio dell\u2019azione. Alcuni movimenti (passaggio iniziale, dove si apre {2} dopo il blocco, posizioni finali di 1, {3} e {4}) sono ipotesi da confermare. Scegli la lettura della difesa per vedere come finisce l\u2019azione.',
+  start:{1:[4.9,7.5],2:[1.7,1.4],3:[-1.7,1.4],4:[-2.2,5.6],5:[2.2,5.6]},
+  ball:1,
+  phases:[
+    {title:'Schieramento', text:'1 ha palla in guardia, larga sul lato {dx}. {2} e {3} sotto canestro, {4} e {5} ai gomiti dell\u2019area.', dur:1.2, actions:[]},
+    {title:'Doppio blocco verso il basso', text:'{5} blocca per {2}, {4} blocca per {3}. I due piccoli usano il blocco e salgono in verticale fino a fuori dalla linea da tre.', dur:2.8, actions:[
+      {k:'screen',p:5,for:2,path:[[1.75,2.55]],t:[0,.42]},
+      {k:'screen',p:4,for:3,path:[[-1.75,2.55]],t:[0,.42]},
+      {k:'cut',p:2,path:[[2.45,2.6],[2.15,5.2],[2.0,8.6]],t:[.38,1]},
+      {k:'cut',p:3,path:[[-2.45,2.6],[-2.15,5.2],[-2.0,8.6]],t:[.38,1]}]},
+    {title:'Passaggio a {2}', text:'1 passa a {2}, salito in guardia sullo stesso lato.', dur:1.1, actions:[
+      {k:'pass',from:1,to:2,t:[.1,.9]}]},
+    {title:'Ribaltamento e blocco per 1', text:'{2} ribalta la palla a {3}. Intanto {5} si apre e blocca per 1, che taglia verso canestro e si apre nell\u2019angolo {dx}.', dur:3, actions:[
+      {k:'pass',from:2,to:3,t:[.05,.35]},
+      {k:'screen',p:5,for:1,path:[[3.0,4.2],[3.8,5.6]],t:[0,.38]},
+      {k:'cut',p:1,path:[[3.0,6.4],[1.3,3.4],[3.6,1.0],[6.8,0.8]],t:[.34,1]}]},
+    {title:'Terzo blocco di {5}: per {2}', text:'{5} blocca per {2}, che dopo aver ribaltato si apre in ala sul lato {dx}. {4} si sposta sotto, lato {sx}.', dur:3, actions:[
+      {k:'screen',p:5,for:2,path:[[2.5,6.7],[1.2,7.9]],t:[0,.5]},
+      {k:'cut',p:2,path:[[3.3,8.6],[5.0,7.2]],t:[.45,1]},
+      {k:'cut',p:4,path:[[-3.7,0.9]],t:[.1,.6]}]},
+    {title:'{5} esce in punta', text:'Dopo il terzo blocco {5} esce in punta e riceve da {3}.', dur:1.8, actions:[
+      {k:'cut',p:5,path:[[0.3,9.6]],t:[0,.55]},
+      {k:'pass',from:3,to:5,t:[.55,1]}]},
+    {title:'Ribaltamento', text:'{5} ribalta la palla a {2} sul lato {dx}.', dur:1.1, actions:[
+      {k:'pass',from:5,to:2,t:[.1,.9]}]},
+    {title:'Blocco sulla palla', text:'{5} segue il passaggio e porta il blocco sulla palla a {2}. Ora {2} legge cosa fa la difesa.', dur:1.6, actions:[
+      {k:'screen',p:5,for:2,read:true,path:[[4.2,7.9]],t:[0,.6]}]}
+  ],
+  variants:[
+    {name:'Roll di {5}', desc:'X{5} esce alto sul palleggiatore per fermarlo: {5} rolla verso canestro senza nessuno e riceve.', mode:'alto', phases:[
+      {title:'{2} attacca, {5} rolla', text:'{2} usa il blocco verso il centro. X{5} lo ferma, {5} rolla libero e riceve.', dur:2.6, actions:[
+        {k:'dribble',p:2,path:[[3.9,6.7],[2.8,6.7]],t:[0,.6]},
+        {k:'cut',p:5,path:[[3.0,5.6],[1.2,3.0]],t:[.1,.75]},
+        {k:'pass',from:2,to:5,t:[.65,1]}]},
+      {title:'Appoggio di {5}', text:'{5} conclude da sotto.', dur:.9, actions:[{k:'shot',p:5,t:[.1,.8]}]}]},
+    {name:'Tiro di {2}', desc:'X{2} passa sotto il blocco e lascia spazio: {2} usa il blocco e tira dal palleggio.', mode:'sotto', phases:[
+      {title:'Blocco e tiro', text:'{2} sfrutta il blocco, si arresta e tira.', dur:2, actions:[
+        {k:'dribble',p:2,path:[[3.6,7.4],[2.7,7.8]],t:[0,.55]},
+        {k:'shot',p:2,t:[.62,1]}]}]},
+    {name:'Cambio: {5} in post', desc:'La difesa cambia: X{5} prende {2} e X{2} prende {5}. {5} tiene il difensore più piccolo alle spalle vicino a canestro e riceve.', mode:'cambia', def:[{ph:8,t:.35,x:5,g:5,d:-.6}], phases:[
+      {title:'Cambio e roll', text:'Dopo il cambio {5} rolla, si tiene X{2} alle spalle e riceve da {2}.', dur:2.6, actions:[
+        {k:'dribble',p:2,path:[[4.3,6.3]],t:[0,.4]},
+        {k:'cut',p:5,path:[[3.0,5.0],[1.6,2.6]],t:[0,.65]},
+        {k:'pass',from:2,to:5,t:[.68,1]}]},
+      {title:'Appoggio di {5}', text:'{5} conclude sul difensore più piccolo.', dur:.9, actions:[{k:'shot',p:5,t:[.1,.8]}]}]},
+    {name:'Raddoppio: short roll', desc:'X{2} e X{5} raddoppiano {2}. {2} passa a {5} che si apre in lunetta; X{4} sale su {5} e lascia {4} libero sotto canestro.', def:[{ph:7,t:.6,x:5,g:2,d:.45},{ph:8,t:.65,x:4,g:5,d:.9}], phases:[
+      {title:'Raddoppio e scarico a {5}', text:'{2} si allontana dal raddoppio e passa a {5}, che si apre in lunetta.', dur:2.4, actions:[
+        {k:'dribble',p:2,path:[[5.6,8.0]],t:[0,.3]},
+        {k:'cut',p:5,path:[[3.0,6.2],[1.0,5.8]],t:[.1,.6]},
+        {k:'pass',from:2,to:5,t:[.55,.9]}]},
+      {title:'{5} serve {4}', text:'X{4} sale su {5}, così {5} serve {4} che taglia sotto canestro.', dur:1.8, actions:[
+        {k:'cut',p:4,path:[[-1.2,2.0]],t:[0,.45]},
+        {k:'pass',from:5,to:4,t:[.4,.85]}]},
+      {title:'Appoggio di {4}', text:'{4} conclude da sotto.', dur:.9, actions:[{k:'shot',p:4,t:[.1,.8]}]}]},
+    {name:'Scarico in angolo', desc:'X1 lascia l’angolo per fermare il roll di {5}: {2} scarica a 1, rimasto libero in angolo.', mode:'segue', def:[{ph:8,t:.4,x:1,s:[2.3,2.5]},{ph:9,t:.15,x:1,g:1}], phases:[
+      {title:'Penetrazione e scarico', text:'{2} attacca, {5} rolla. X1 aiuta su {5} e {2} scarica a 1 nell’angolo.', dur:2.6, actions:[
+        {k:'dribble',p:2,path:[[3.9,6.6],[2.6,6.2]],t:[0,.6]},
+        {k:'cut',p:5,path:[[3.0,5.6],[1.4,3.0]],t:[.1,.75]},
+        {k:'pass',from:2,to:1,t:[.68,1]}]},
+      {title:'Tiro di 1', text:'1 tira dall’angolo.', dur:1, actions:[{k:'shot',p:1,t:[.1,.85]}]}]}
+  ]
+},{
+  id:'corna', name:'Corna', mirror:true, sideLabel:'Primo passaggio a',
+  note:'Si gioca su entrambi i lati: con il selettore del lato in alto vedi lo schema a specchio. Dove si apre 1 dopo il taglio è un’ipotesi da confermare.',
+  start:{1:[0,9.0],2:[6.8,0.8],3:[-6.8,0.8],4:[-3.2,7.6],5:[3.2,7.6]},
+  ball:1,
+  phases:[
+    {title:'Schieramento', text:'1 ha palla al centro. 4 e 5 in guardia sulla linea da tre, 2 e 3 negli angoli.', dur:1.2, actions:[]},
+    {title:'Passaggio a {5}', text:'1 passa a {5}, il lungo sul lato {dx}.', dur:1.1, actions:[
+      {k:'pass',from:1,to:5,t:[.1,.9]}]},
+    {title:'Blocco di {4} per 1', text:'{4} va a bloccare per 1. Ora 1 legge cosa fa il suo difensore.', dur:1.5, actions:[
+      {k:'screen',p:4,for:1,read:true,path:[[-1.0,8.1]],t:[0,.7]}]}
+  ],
+  variants:[
+    {name:'Taglio di {4}', mode:'cambia', desc:'La difesa cambia: X{4} prende 1, ma X1 resta indietro e non riesce a seguire {4}, che taglia libero a canestro e riceve.', def:[{ph:4,t:0,x:4,s:[-1.6,7.4]},{ph:5,t:.3,x:4,g:4}], phases:[
+      {title:'Taglio di 1', text:'1 taglia verso canestro, viene seguito e si apre sul lato {sx}.', dur:2.4, actions:[
+        {k:'cut',p:1,path:[[-0.35,7.5],[-0.6,4.4],[-2.6,2.6],[-5.4,4.8]],t:[0,1]}]},
+      {title:'Taglio di {4} e passaggio', text:'Dopo il cambio X1 resta indietro, così {4} è libero: taglia a canestro e riceve da {5}.', dur:2.2, actions:[
+        {k:'cut',p:4,path:[[-0.6,5.4],[0,2.5]],t:[0,.7]},
+        {k:'pass',from:5,to:4,t:[.5,.95]}]},
+      {title:'Appoggio di {4}', text:'{4} conclude da sotto.', dur:.9, actions:[{k:'shot',p:4,t:[.1,.8]}]}]},
+    {name:'1 libero sul taglio', mode:'segue', nobump:true, desc:'X1 resta bloccato da {4}: 1 taglia libero verso canestro e riceve da {5}.', def:[{ph:3,t:.1,x:1,s:[-1.5,8.8]},{ph:4,t:.5,x:1,g:1}], phases:[
+      {title:'Taglio di 1', text:'1 sfrutta il blocco e taglia dritto a canestro. {5} lo serve.', dur:2.4, actions:[
+        {k:'cut',p:1,path:[[-0.35,7.5],[-0.5,4.4],[-0.2,2.7]],t:[0,.75]},
+        {k:'pass',from:5,to:1,t:[.55,.95]}]},
+      {title:'Appoggio di 1', text:'1 conclude da sotto.', dur:.9, actions:[{k:'shot',p:1,t:[.1,.8]}]}]},
+    {name:'1 torna fuori', desc:'X1 anticipa il taglio e scende sotto il blocco: 1 finta il taglio, torna in punta e riceve per il tiro.', mode:'sotto', phases:[
+      {title:'Finta e uscita', text:'1 finta il taglio e torna in punta. {5} gli passa la palla.', dur:2.2, actions:[
+        {k:'cut',p:1,path:[[-0.4,7.6],[0.2,8.6],[1.0,9.8]],t:[0,.65]},
+        {k:'pass',from:5,to:1,t:[.62,.95]}]},
+      {title:'Tiro di 1', text:'1 tira da tre.', dur:1, actions:[{k:'shot',p:1,t:[.1,.85]}]}]},
+    {name:'Scarico in angolo', desc:'Sul taglio di {4} il difensore di {2} lascia l’angolo per aiutare: {5} passa a {2}, libero in angolo.', def:[{ph:3,t:.4,x:4,g:1,d:1.5},{ph:4,t:.3,x:2,s:[1.4,2.5]},{ph:5,t:.2,x:2,g:2}], phases:[
+      {title:'Taglio di 1', text:'1 taglia verso canestro, viene seguito e si apre sul lato {sx}.', dur:2.4, actions:[
+        {k:'cut',p:1,path:[[-0.35,7.5],[-0.6,4.4],[-2.6,2.6],[-5.4,4.8]],t:[0,1]}]},
+      {title:'Taglio di {4} e scarico', text:'{4} taglia, ma X{2} chiude su di lui. {5} passa a {2} nell’angolo.', dur:2.2, actions:[
+        {k:'cut',p:4,path:[[-0.6,5.4],[0,2.5]],t:[0,.6]},
+        {k:'pass',from:5,to:2,t:[.55,.95]}]},
+      {title:'Tiro di {2}', text:'{2} tira dall’angolo.', dur:1, actions:[{k:'shot',p:2,t:[.1,.85]}]}]}
+  ]
+},{
+  id:'flash', name:'Flash', mirror:true, sideLabel:'Palla sul lato', mirrorMap:{1:1,2:3,3:2,4:4,5:5},
+  note:'Ipotesi da confermare: 4 porta il blocco vero e 5 lo segue tagliando dentro; 4 e 5 partono in fila alla stessa altezza di 1, 2 e 3 negli angoli. Con il selettore in alto scegli il lato della palla.',
+  start:{1:[3.4,8.2],2:[6.8,0.8],3:[-6.8,0.8],4:[-0.5,8.5],5:[-2.6,8.4]},
+  ball:1,
+  phases:[
+    {title:'Schieramento', text:'1 ha palla in guardia sul lato {dx}, 2 e 3 negli angoli. 4 e 5 sono in fila verso il centro, alla stessa altezza di 1.', dur:1.2, actions:[]},
+    {title:'Doppio blocco', text:'4 porta il blocco vero sul difensore di 1. 5 lo segue a un passo di distanza.', dur:2.4, actions:[
+      {k:'screen',p:4,for:1,read:true,path:[[1.2,8.8],[2.4,9.1]],t:[0,.5]},
+      {k:'cut',p:5,path:[[-0.6,8.6],[1.1,9.1]],t:[.1,.62]}]},
+    {title:'1 usa il blocco, 5 taglia dentro', text:'1 attacca verso il centro sfruttando il blocco di 4. 5 non blocca: taglia dentro l\u2019area verso canestro.', dur:2.6, actions:[
+      {k:'cut',p:5,path:[[1.8,8.0],[1.0,5.0],[0.5,3.2]],t:[0,.7]},
+      {k:'dribble',p:1,path:[[2.2,8.0],[0.4,7.4]],t:[.3,1]}]}
+  ],
+  variants:[
+    {name:'Passaggio a 5', mode:'alto', def:[{ph:2,t:.15,x:5,s:[1.7,7.4]},{ph:3,t:.6,x:5,g:5}], desc:'X4 esce alto su 1 e X5 resta a guardia del blocco: nessuno segue il taglio di 5 e 1 lo serve in area.', phases:[
+      {title:'Passaggio a 5', text:'1 serve 5 che taglia libero verso canestro.', dur:1.4, actions:[
+        {k:'pass',from:1,to:5,t:[.05,.6]},
+        {k:'cut',p:5,path:[[0.3,2.4]],t:[.5,1]}]},
+      {title:'Appoggio di 5', text:'5 conclude da sotto.', dur:.9, actions:[{k:'shot',p:5,t:[.1,.8]}]}]},
+    {name:'4 si apre per il tiro', mode:'segue', def:[{ph:2,t:.35,x:4,g:5,d:.8}], desc:'Il difensore di 4 aiuta sul taglio di 5: 4 dopo il blocco si apre fuori dall\u2019arco e resta libero per il tiro.', phases:[
+      {title:'4 si apre', text:'4 si stacca dal blocco e si apre fuori dall\u2019arco sul lato {dx}. 1 lo serve.', dur:2.2, actions:[
+        {k:'cut',p:4,path:[[3.6,8.4],[4.8,7.2]],t:[0,.55]},
+        {k:'pass',from:1,to:4,t:[.55,.95]}]},
+      {title:'Tiro di 4', text:'4 tira da tre.', dur:1, actions:[{k:'shot',p:4,t:[.1,.85]}]}]},
+    {name:'High-low 4 \u2192 5', def:[{ph:2,t:.35,x:4,g:5,d:.8},{ph:3,t:.1,x:4,g:4},{ph:4,t:0,x:5,g:5,d:-.75}], desc:'La difesa recupera su 4 che si apre, ma 5 tiene il suo difensore alle spalle: 4 lo serve dall\u2019alto.', phases:[
+      {title:'4 si apre', text:'4 si stacca dal blocco e si apre fuori dall\u2019arco. 1 lo serve.', dur:2.2, actions:[
+        {k:'cut',p:4,path:[[3.6,8.4],[4.8,7.2]],t:[0,.55]},
+        {k:'pass',from:1,to:4,t:[.55,.95]}]},
+      {title:'Passaggio alto-basso', text:'5 tiene il difensore alle spalle sotto canestro e riceve da 4.', dur:1.8, actions:[
+        {k:'cut',p:5,path:[[1.3,2.4]],t:[0,.35]},
+        {k:'pass',from:4,to:5,t:[.35,.8]}]},
+      {title:'Appoggio di 5', text:'5 conclude da sotto.', dur:.9, actions:[{k:'shot',p:5,t:[.1,.8]}]}]},
+    {name:'Scarico in angolo', def:[{ph:2,t:.5,x:3,s:[-1.5,2.9]},{ph:3,t:.75,x:3,g:3}], desc:'Il difensore dell\u2019angolo {sx} chiude sul taglio di 5: 1 attacca l\u2019area e scarica a {3}, rimasto libero in angolo.', phases:[
+      {title:'Penetrazione e scarico', text:'1 continua in palleggio verso l\u2019area e scarica a {3} nell\u2019angolo {sx}.', dur:2.2, actions:[
+        {k:'dribble',p:1,path:[[-0.6,6.0]],t:[0,.5]},
+        {k:'pass',from:1,to:3,t:[.5,.95]}]},
+      {title:'Tiro di {3}', text:'{3} tira dall\u2019angolo.', dur:1, actions:[{k:'shot',p:3,t:[.1,.85]}]}]},
+    {name:'Tiro di 1', mode:'sotto', desc:'Il difensore di 1 passa sotto il blocco e lascia spazio: 1 si arresta e tira dal palleggio.', phases:[
+      {title:'Arresto e tiro', text:'1 si arresta dopo il blocco e tira dal palleggio.', dur:1.3, actions:[{k:'shot',p:1,t:[.2,.85]}]}]},
+    {name:'Cambio: 4 in post', mode:'cambia', def:[{ph:3,t:.3,x:4,g:4,d:-.6}], desc:'La difesa cambia sul blocco: X4 prende 1 e X1, pi\u00f9 piccolo, prende 4. 4 lo porta vicino a canestro, se lo tiene alle spalle e riceve.', phases:[
+      {title:'Cambio e roll di 4', text:'Dopo il cambio 4 rolla verso canestro con X1 alle spalle e riceve da 1.', dur:2.4, actions:[
+        {k:'cut',p:4,path:[[2.6,6.0],[2.0,2.6]],t:[0,.6]},
+        {k:'pass',from:1,to:4,t:[.6,.95]}]},
+      {title:'Appoggio di 4', text:'4 conclude sul difensore pi\u00f9 piccolo.', dur:.9, actions:[{k:'shot',p:4,t:[.1,.8]}]}]}
+  ]
+},{
+  id:'lato', name:'Lato', mirror:true, sideLabel:'Si parte dal lato',
+  note:'Ipotesi da confermare: dopo il blocco {4} resta alto in lunetta; i due angoli si scambiano durante il pick and roll. Con il selettore in alto scegli il lato.',
+  start:{1:[0,9.0],2:[4.6,7.4],3:[-4.6,7.4],4:[-2.45,5.8],5:[2.45,5.8]},
+  ball:1,
+  phases:[
+    {title:'Schieramento', text:'1 ha palla al centro. 4 e 5 agli spigoli del tiro libero, 2 e 3 in posizione di guardia.', dur:1.2, actions:[]},
+    {title:'Blocco di {5} per {2}, taglio di {3}', text:'{2} sfrutta il blocco di {5}, passa vicino a {4} e va in guardia sul lato {sx}. {3} taglia sotto canestro e va nell’angolo opposto.', dur:3.2, actions:[
+      {k:'cut',p:3,path:[[-3.6,3.4],[-1.4,0.9],[2.5,0.7],[6.8,0.8]],t:[0,.75]},
+      {k:'screen',p:5,for:2,path:[[3.0,6.2]],t:[0,.35]},
+      {k:'cut',p:2,path:[[3.6,5.2],[1.4,4.2],[-1.4,4.0],[-3.6,4.9],[-4.6,7.4]],t:[.3,1]}]},
+    {title:'Palla a {2}, 1 in angolo', text:'1 passa a {2} in guardia e va nell’angolo sul lato {sx}.', dur:2.4, actions:[
+      {k:'pass',from:1,to:2,t:[.05,.4]},
+      {k:'cut',p:1,path:[[-0.8,7.2],[-1.1,4.2],[-3.6,2.0],[-6.8,0.8]],t:[.35,1]}]},
+    {title:'Blocco di {4} per {5}', text:'{4} blocca il difensore di {5}. {5} sfrutta il blocco e va verso {2}; {4} resta alto in lunetta.', dur:2.6, actions:[
+      {k:'screen',p:4,for:5,path:[[0.4,6.1]],t:[0,.35]},
+      {k:'cut',p:5,path:[[1.4,7.2],[-1.2,7.8],[-3.2,8.6]],t:[.3,1]},
+      {k:'cut',p:4,path:[[2.2,6.4]],t:[.75,1]}]},
+    {title:'Pick and roll, gli angoli si scambiano', text:'{5} porta il blocco sulla palla a {2}. Intanto 1 e {3} si scambiano gli angoli tagliando sotto canestro. Ora {2} legge la difesa.', dur:2.8, actions:[
+      {k:'screen',p:5,for:2,read:true,path:[[-3.9,8.3]],t:[0,.3]},
+      {k:'cut',p:1,path:[[-2.5,0.5],[2.5,0.5],[6.8,0.8]],t:[.2,1]},
+      {k:'cut',p:3,path:[[2.5,2.5],[-2.5,2.5],[-6.8,0.8]],t:[.2,1]}]}
+  ],
+  variants:[
+    {name:'Roll di {5}', desc:'X{5} esce alto su {2} per fermarlo: {5} rolla verso canestro senza nessuno e riceve.', mode:'alto', phases:[
+      {title:'{2} attacca, {5} rolla', text:'{2} usa il blocco verso il centro. X{5} lo ferma, {5} rolla libero e riceve.', dur:2.6, actions:[
+        {k:'dribble',p:2,path:[[-3.6,6.9],[-2.6,6.8]],t:[0,.6]},
+        {k:'cut',p:5,path:[[-3.2,5.8],[-1.2,3.0]],t:[.1,.75]},
+        {k:'pass',from:2,to:5,t:[.65,1]}]},
+      {title:'Appoggio di {5}', text:'{5} conclude da sotto.', dur:.9, actions:[{k:'shot',p:5,t:[.1,.8]}]}]},
+    {name:'Tiro di {2}', desc:'X{2} passa sotto il blocco e lascia spazio: {2} usa il blocco e tira dal palleggio.', mode:'sotto', phases:[
+      {title:'Blocco e tiro', text:'{2} sfrutta il blocco, si arresta e tira da tre.', dur:2, actions:[
+        {k:'dribble',p:2,path:[[-3.6,7.6],[-2.8,8.0]],t:[0,.55]},
+        {k:'shot',p:2,t:[.62,1]}]}]},
+    {name:'Cambio: {5} in post', desc:'La difesa cambia: X{5} prende {2} e X{2} prende {5}. {5} tiene il difensore più piccolo alle spalle vicino a canestro e riceve.', mode:'cambia', def:[{ph:5,t:.35,x:5,g:5,d:-.6}], phases:[
+      {title:'Cambio e roll', text:'Dopo il cambio {5} rolla, si tiene X{2} alle spalle e riceve.', dur:2.6, actions:[
+        {k:'dribble',p:2,path:[[-4.9,6.6]],t:[0,.4]},
+        {k:'cut',p:5,path:[[-3.2,5.2],[-1.7,2.6]],t:[0,.65]},
+        {k:'pass',from:2,to:5,t:[.68,1]}]},
+      {title:'Appoggio di {5}', text:'{5} conclude sul difensore più piccolo.', dur:.9, actions:[{k:'shot',p:5,t:[.1,.8]}]}]},
+    {name:'Scarico in angolo', desc:'X{3} lascia l’angolo per fermare il roll di {5}: {2} scarica a {3}, appena arrivato in angolo.', mode:'segue', def:[{ph:5,t:.35,x:3,s:[-2.2,2.7]},{ph:6,t:.15,x:3,g:3}], phases:[
+      {title:'Penetrazione e scarico', text:'{2} attacca, {5} rolla. X{3} aiuta e {2} passa a {3} nell’angolo.', dur:2.6, actions:[
+        {k:'dribble',p:2,path:[[-3.6,6.6],[-2.6,6.2]],t:[0,.6]},
+        {k:'cut',p:5,path:[[-3.2,5.6],[-1.4,3.0]],t:[.1,.75]},
+        {k:'pass',from:2,to:3,t:[.65,1]}]},
+      {title:'Tiro di {3}', text:'{3} tira dall’angolo.', dur:1, actions:[{k:'shot',p:3,t:[.1,.85]}]}]},
+    {name:'Aiuto di X{4}', desc:'X{4} scende per fermare il roll di {5}: {2} passa a {4}, rimasto libero in lunetta.', def:[{ph:5,t:.35,x:4,s:[-0.8,3.4]},{ph:6,t:.5,x:4,g:4}], phases:[
+      {title:'Roll e passaggio a {4}', text:'{2} attacca, {5} rolla. X{4} chiude su {5} e {2} serve {4} in lunetta.', dur:2.6, actions:[
+        {k:'dribble',p:2,path:[[-3.6,6.6],[-2.6,6.4]],t:[0,.6]},
+        {k:'cut',p:5,path:[[-3.2,5.6],[-1.4,3.0]],t:[.1,.75]},
+        {k:'pass',from:2,to:4,t:[.65,1]}]},
+      {title:'Tiro di {4}', text:'{4} tira dalla lunetta.', dur:1, actions:[{k:'shot',p:4,t:[.1,.85]}]}]}
+  ]
+},{
+  id:'giro', name:'Giro', mirror:true, sideLabel:'Palla sul lato',
+  note:'Ipotesi da confermare: dopo il blocco per 1, {4} resta alto in lunetta.',
+  start:{1:[4.6,7.6],2:[-4.6,7.6],3:[-6.8,0.8],4:[-2.6,1.6],5:[6.8,0.8]},
+  ball:1,
+  phases:[
+    {title:'Schieramento', text:'1 ha palla in guardia sul lato {dx}. {2} in guardia sul lato {sx}, {3} nell’angolo {sx}. {4} parte in basso sul prolungamento del tiro libero, lato {sx}; {5} nell’angolo {dx}.', dur:1.2, actions:[]},
+    {title:'Blocco di {4} sulla palla, {5} gira', text:'{4} risale dal lato {sx} e porta il blocco sulla palla a 1. Intanto {3} sale leggermente dall’angolo e {5} parte dall’angolo {dx} e gira lungo la linea di fondo fino all’angolo {sx}, al posto di {3}.', dur:2.6, actions:[
+      {k:'cut',p:3,path:[[-6.6,2.4],[-6.2,3.6]],t:[0,.45]},
+      {k:'cut',p:5,path:[[3.0,0.5],[-3.0,0.5],[-6.8,0.8]],t:[.15,1]},
+      {k:'screen',p:4,for:1,path:[[-0.6,4.6],[2.2,7.0],[3.7,8.0]],t:[0,.75]}]},
+    {title:'1 attacca il centro e riapre', text:'1 usa il blocco e attacca verso il centro, poi riapre la palla a {2} in guardia sul lato {sx}. {4} si apre in lunetta.', dur:2.6, actions:[
+      {k:'dribble',p:1,path:[[3.0,8.7],[0.9,9.1]],t:[0,.6]},
+      {k:'cut',p:4,path:[[2.8,7.0],[1.6,6.5]],t:[.3,.8]},
+      {k:'pass',from:1,to:2,t:[.6,.95]}]},
+    {title:'Passaggio a {3} e blocco di {4} per 1', text:'Nello stesso momento: {3} sale in ala e riceve da {2}, mentre 1, che ha appena passato, sfrutta il blocco di {4} e si apre nell’angolo {dx}, quello lasciato libero da {5}.', dur:3, actions:[
+      {k:'cut',p:3,path:[[-6.0,4.4],[-5.7,5.0]],t:[0,.35]},
+      {k:'screen',p:4,for:1,path:[[1.9,7.1]],t:[0,.3]},
+      {k:'pass',from:2,to:3,t:[.3,.62]},
+      {k:'cut',p:1,path:[[1.2,7.9],[2.5,5.8],[4.6,3.0],[6.8,0.8]],t:[.25,1]}]},
+    {title:'Pick and roll {3}–{2}', text:'{2} segue il passaggio e porta il blocco a {3}, che attaccherà verso il centro. Ora {3} legge cosa fa la difesa.', dur:1.8, actions:[
+      {k:'screen',p:2,for:3,read:true,path:[[-4.8,5.9]],t:[0,.6]}]}
+  ],
+  variants:[
+    {name:'Taglio di {2}', mode:'alto', desc:'X{2} esce alto su {3} per fermarlo: {2} taglia verso canestro senza nessuno e riceve.', phases:[
+      {title:'{3} attacca, {2} taglia', text:'{3} usa il blocco verso il centro. X{2} lo ferma, {2} taglia libero a canestro e riceve.', dur:2.6, actions:[
+        {k:'dribble',p:3,path:[[-4.6,5.6],[-3.4,5.9]],t:[0,.6]},
+        {k:'cut',p:2,path:[[-3.8,4.6],[-1.2,2.6]],t:[.1,.75]},
+        {k:'pass',from:3,to:2,t:[.65,1]}]},
+      {title:'Appoggio di {2}', text:'{2} conclude da sotto.', dur:.9, actions:[{k:'shot',p:2,t:[.1,.8]}]}]},
+    {name:'Tiro di {3}', mode:'sotto', desc:'X{3} passa sotto il blocco e lascia spazio: {3} usa il blocco e tira dal palleggio.', phases:[
+      {title:'Blocco e tiro', text:'{3} sfrutta il blocco verso il centro, si arresta e tira da tre.', dur:2, actions:[
+        {k:'dribble',p:3,path:[[-4.7,6.3],[-3.7,7.0]],t:[0,.55]},
+        {k:'shot',p:3,t:[.62,1]}]}]},
+    {name:'Cambio: {2} taglia', mode:'cambia', def:[{ph:5,t:.3,x:2,g:2,d:-.6}], desc:'La difesa cambia: X{2} prende {3} e X{3} prende {2}. Prima che X{3} si sistemi, {2} taglia subito a canestro e riceve.', phases:[
+      {title:'Taglio dopo il cambio', text:'Sul cambio {2} non aspetta: taglia verso canestro e {3} lo serve.', dur:2.2, actions:[
+        {k:'dribble',p:3,path:[[-6.0,4.4]],t:[0,.35]},
+        {k:'cut',p:2,path:[[-3.8,4.6],[-1.4,2.6]],t:[0,.6]},
+        {k:'pass',from:3,to:2,t:[.6,.95]}]},
+      {title:'Appoggio di {2}', text:'{2} conclude da sotto.', dur:.9, actions:[{k:'shot',p:2,t:[.1,.8]}]}]},
+    {name:'Scarico a 1 in angolo', mode:'segue', def:[{ph:5,t:.35,x:1,s:[1.8,2.8]},{ph:6,t:.2,x:1,g:1}], desc:'X1 lascia l’angolo {dx} per fermare il taglio di {2}: {3} trova 1 con un passaggio lungo, libero nell’angolo opposto.', phases:[
+      {title:'Penetrazione e scarico lungo', text:'{3} attacca il centro, {2} taglia. X1 aiuta in area e {3} passa a 1 nell’angolo {dx}.', dur:2.6, actions:[
+        {k:'dribble',p:3,path:[[-4.4,5.6],[-2.6,5.2]],t:[0,.55]},
+        {k:'cut',p:2,path:[[-3.8,4.6],[-1.2,2.8]],t:[.1,.7]},
+        {k:'pass',from:3,to:1,t:[.6,1]}]},
+      {title:'Tiro di 1', text:'1 tira dall’angolo.', dur:1, actions:[{k:'shot',p:1,t:[.1,.85]}]}]},
+    {name:'Aiuto di X{4}: tiro di {4}', mode:'segue', def:[{ph:5,t:.35,x:4,s:[-1.2,4.4]},{ph:6,t:.4,x:4,g:4}], desc:'X{4} scende per fermare la penetrazione di {3} verso il centro: {3} passa a {4}, rimasto libero in lunetta.', phases:[
+      {title:'Penetrazione e passaggio a {4}', text:'{3} attacca il centro, X{4} si stacca per fermarlo e {3} serve {4}.', dur:2.4, actions:[
+        {k:'dribble',p:3,path:[[-4.4,5.6],[-2.4,5.4]],t:[0,.6]},
+        {k:'pass',from:3,to:4,t:[.6,.95]}]},
+      {title:'Tiro di {4}', text:'{4} tira dalla lunetta.', dur:1, actions:[{k:'shot',p:4,t:[.1,.85]}]}]}
+  ]
+}];
+
+let flip=false, vi=0, showDef=true, gMode='segue', ctrl='difesa', focusP=null, loopOn=false, loopPh=null;
+try{ const c=localStorage.getItem('lavagna-ctrl'); if(c==='lettura') ctrl='lettura'; }catch(e){}
+try{ const m=localStorage.getItem('lavagna-mode'); if(['segue','cambia','sotto','alto'].includes(m)) gMode=m; }catch(e){}
+const MODES={segue:['Segue','il difensore passa sopra il blocco e resta sul suo uomo.'],cambia:['Cambia','i due difensori si scambiano l\u2019uomo.'],sotto:['Passa sotto','il difensore scende sotto il blocco.'],alto:['Esce alto','il difensore di chi blocca esce sul palleggiatore per fermarlo.']};
+try{ if(localStorage.getItem('lavagna-def')==='0') showDef=false; }catch(e){}
+const MAPD={1:1,2:3,3:2,4:5,5:4};
+function oriented(pl){
+  if(!flip||!pl.mirror) return pl;
+  const MAP=pl.mirrorMap||MAPD, fx=q=>[-q[0],q[1]], start={};
+  for(const k in pl.start) start[MAP[k]]=fx(pl.start[k]);
+  return {...pl,start,ball:MAP[pl.ball],def:(pl.def||[]).map(c=>({...c,x:MAP[c.x],g:c.g&&MAP[c.g],s:c.s&&fx(c.s)})),phases:pl.phases.map(ph=>({...ph,actions:ph.actions.map(a=>a.k==='pass'?{...a,from:MAP[a.from],to:MAP[a.to]}:a.k==='shot'?{...a,p:MAP[a.p]}:{...a,p:MAP[a.p],for:a.for&&MAP[a.for],path:a.path.map(fx)})}))};
+}
+function txt(str){
+  const f=flip&&play&&play.mirror;
+  return str.replace(/\{(dx|sx|\d)\}/g,(m,k)=>k==='dx'?(f?'sinistro':'destro'):k==='sx'?(f?'destro':'sinistro'):String(f?(play.mirrorMap||MAPD)[k]:k));
+}
+
+const HOLD = .6, SMALL = window.matchMedia('(max-width:600px)').matches, PR = SMALL?.46:.38, DR = SMALL?.38:.32;
+const $ = id => document.getElementById(id);
+const NS = 'http://www.w3.org/2000/svg';
+const mk = (tag, attrs={}) => { const e=document.createElementNS(NS,tag); for(const k in attrs) e.setAttribute(k,attrs[k]); return e; };
+const ease = x => x<.5 ? 2*x*x : 1-Math.pow(-2*x+2,2)/2;
+const lerp = (a,b,f) => [a[0]+(b[0]-a[0])*f, a[1]+(b[1]-a[1])*f];
+
+function cr(p0,p1,p2,p3,t){const t2=t*t,t3=t2*t;return [0,1].map(k=>.5*(2*p1[k]+(-p0[k]+p2[k])*t+(2*p0[k]-5*p1[k]+4*p2[k]-p3[k])*t2+(-p0[k]+3*p1[k]-3*p2[k]+p3[k])*t3));}
+function smooth(pts){
+  if(pts.length<3){const o=[];for(let i=0;i<=20;i++)o.push(lerp(pts[0],pts[1],i/20));return o;}
+  const P=[pts[0],...pts,pts[pts.length-1]],o=[];
+  for(let i=1;i<P.length-2;i++) for(let s=0;s<16;s++) o.push(cr(P[i-1],P[i],P[i+1],P[i+2],s/16));
+  o.push(pts[pts.length-1]); return o;
+}
+function cumul(pts){const c=[0];for(let i=1;i<pts.length;i++)c.push(c[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));return c;}
+function at(pts,c,d){
+  if(d<=0) return pts[0]; const L=c[c.length-1]; if(d>=L) return pts[pts.length-1];
+  let i=1; while(c[i]<d) i++; return lerp(pts[i-1],pts[i],(d-c[i-1])/(c[i]-c[i-1]));
+}
+function trim(pts,a,b){
+  const c=cumul(pts),L=c[c.length-1]; if(L<a+b+.05) return pts.slice();
+  const out=[at(pts,c,a)]; for(let i=0;i<pts.length;i++) if(c[i]>a&&c[i]<L-b) out.push(pts[i]);
+  out.push(at(pts,c,L-b)); return out;
+}
+function zig(pts){
+  const c=cumul(pts),L=c[c.length-1],o=[];
+  for(let d=0;d<=L;d+=.06){
+    const p=at(pts,c,d),q=at(pts,c,Math.min(L,d+.05)),dx=q[0]-p[0],dy=q[1]-p[1],n=Math.hypot(dx,dy)||1;
+    const amp=d<L-.45?.13*Math.sin(d/.42*2*Math.PI):0; o.push([p[0]-dy/n*amp,p[1]+dx/n*amp]);
+  }
+  o.push(pts[pts.length-1]); return o;
+}
+const dStr = pts => 'M'+pts.map(p=>p[0].toFixed(3)+' '+p[1].toFixed(3)).join(' L');
+
+let M, play, t=0, playing=false, stopAt=null, speed=1, curPhase=-1;
+
+function build(pl){
+  const pos={}; for(const k in pl.start) pos[k]=pl.start[k].slice();
+  const segs={}, passes=[], phases=[]; let T=0;
+  pl.phases.forEach(ph=>{
+    const st=T, drawn=[];
+    [...ph.actions].sort((a,b)=>a.t[0]-b.t[0]).forEach(a=>{
+      const t0=st+a.t[0]*ph.dur, t1=st+a.t[1]*ph.dur;
+      if(a.k==='pass'||a.k==='shot'){const ps={k:a.k,from:a.k==='shot'?a.p:a.from,to:a.k==='shot'?'R':a.to,t0,t1};passes.push(ps);drawn.push(ps);}
+      else{const pts=smooth([pos[a.p],...a.path]);const s={k:a.k,p:a.p,t0,t1,pts,c:cumul(pts),for:a.for,read:a.read};(segs[a.p]=segs[a.p]||[]).push(s);drawn.push(s);pos[a.p]=a.path[a.path.length-1].slice();}
+    });
+    phases.push({...ph,start:st,end:st+ph.dur+HOLD,drawn}); T+=ph.dur+HOLD;
+  });
+  const defs={};
+  (pl.def||[]).forEach(c=>{const ph=phases[c.ph];(defs[c.x]=defs[c.x]||[]).push({t:ph.start+c.t*ph.dur,r:{g:c.g,d:c.d,s:c.s}});});
+  for(const k in defs) defs[k].sort((a,b)=>a.t-b.t);
+  return {segs,passes,phases,total:T,defs};
+}
+function posOf(p,tt){
+  if(p==='R') return [0,1.575];
+  let pos=play.start[p];
+  for(const s of (M.segs[p]||[])){
+    if(tt<s.t0) break;
+    if(tt>=s.t1){pos=s.pts[s.pts.length-1];continue;}
+    return at(s.pts,s.c,ease((tt-s.t0)/(s.t1-s.t0))*s.c[s.c.length-1]);
+  }
+  return pos;
+}
+function dribbling(p,tt){return (M.segs[p]||[]).some(s=>s.k==='dribble'&&tt>=s.t0&&tt<s.t1);}
+const bp=(p,tt)=>{const q=posOf(p,tt);return p==='R'?q:[q[0]+.3,q[1]-.25];};
+function ballPos(tt){
+  let holder=play.ball;
+  for(const ps of M.passes){
+    if(tt>=ps.t1){holder=ps.to;continue;}
+    if(tt>=ps.t0){const f=(tt-ps.t0)/(ps.t1-ps.t0),q=lerp(bp(ps.from,tt),bp(ps.to,tt),ease(f));if(ps.to==='R')q[1]-=Math.sin(Math.PI*f)*.45;return q;}
+    break;
+  }
+  if(holder==='R') return [0,1.575];
+  const p=posOf(holder,tt), bounce=dribbling(holder,tt)?Math.abs(Math.sin(tt*9))*.12:0;
+  return [p[0]+.3,p[1]-.25+bounce];
+}
+function moving(p,tt){return (M.segs[p]||[]).some(s=>tt>=s.t0&&tt<s.t1);}
+function useTime(U,spot,t1){
+  let best=t1,bd=1e9;
+  for(let tt=t1-.3;tt<=t1+6;tt+=.05){ if(!moving(U,tt)) continue; const q=posOf(U,tt),d=Math.hypot(q[0]-spot[0],q[1]-spot[1]); if(d<bd){bd=d;best=tt;} }
+  return bd<2.6?best:t1;
+}
+function buildDefense(){
+  const defOf={}; for(const k in play.start) defOf[k]=k;
+  const items=[];
+  (play.def||[]).forEach(c=>{const ph=M.phases[c.ph]; items.push({t:ph.start+c.t*ph.dur,c});});
+  for(const p in M.segs) M.segs[p].forEach(s=>{
+    if(s.k!=='screen'||!s.for) return;
+    let mode = s.read ? (play.readNoBump?null:(play.readMode||'segue')) : (ctrl==='difesa'?gMode:(play.readMode||'segue'));
+    if(!s.read && mode==='alto') mode='segue';
+    if(!mode) return;
+    const spot=s.pts[s.pts.length-1];
+    items.push({t:useTime(s.for,spot,s.t1),S:String(s.p),U:String(s.for),spot,mode});
+  });
+  items.sort((a,b)=>a.t-b.t);
+  const out={}, add=(d,t,r)=>(out[d]=out[d]||[]).push({t,r});
+  items.forEach(it=>{
+    if(it.c){const c=it.c; add(defOf[c.x],it.t,{g:c.g,d:c.d,s:c.s}); return;}
+    const dU=defOf[it.U], dS=defOf[it.S], tc=it.t;
+    const a=posOf(it.U,tc-.15), b=posOf(it.U,tc+.15), dx=b[0]-a[0], dy=b[1]-a[1], n=Math.hypot(dx,dy)||1;
+    const bump=[it.spot[0]-dx/n*.5, it.spot[1]-dy/n*.5];
+    if(it.mode==='segue'||it.mode==='alto'){add(dU,tc-.3,{s:bump});add(dU,tc+.45,{g:it.U});}
+    if(it.mode==='alto'){add(dS,tc-.45,{g:it.U,d:.45});add(dS,tc+1.4,{g:it.S});}
+    if(it.mode==='sotto'){add(dU,tc-.45,{g:it.U,d:2.4});add(dU,tc+1.8,{g:it.U});}
+    if(it.mode==='cambia'){add(dU,tc-.1,{g:it.S});add(dS,tc-.1,{g:it.U});defOf[it.U]=dS;defOf[it.S]=dU;}
+  });
+  for(const k in out) out[k].sort((a,b)=>a.t-b.t);
+  M.defs=out;
+}
+function evalRule(r,tt){
+  if(r.s) return r.s;
+  const q=posOf(r.g,tt),v=[-q[0],1.575-q[1]],L=Math.hypot(v[0],v[1])||1,b=ballPos(tt);
+  const d=r.d!=null?r.d:.75+Math.min(1,Math.hypot(b[0]-q[0],b[1]-q[1])/6)*.8;
+  return [q[0]+v[0]/L*d,q[1]+v[1]/L*d];
+}
+function guardRule(n,tt){const list=[{t:-1,r:{g:n}},...(M.defs[n]||[])];let i=0;while(i+1<list.length&&list[i+1].t<=tt)i++;return list[i].r;}
+function applyFocus(){
+  const f=focusP;
+  for(const p in play.start){
+    const pe=$('pl'+p), de=$('df'+p); if(!pe) continue;
+    pe.classList.toggle('dim',!!f&&p!==f); pe.classList.toggle('focus',p===f);
+    const g=guardRule(p,t).g, mine=!!f&&String(g)===f;
+    de.classList.toggle('dim',!!f&&!mine); de.classList.toggle('focus',mine);
+  }
+  $('trails').querySelectorAll('.tr-g').forEach(g=>g.classList.toggle('dim',!!f&&!g.dataset.who.split(',').includes(f)));
+}
+function drawFocusPath(){
+  const g=$('fpath'); g.replaceChildren(); if(!focusP) return;
+  (M.segs[focusP]||[]).forEach(sg=>g.append(mk('path',{class:'fp',d:dStr(sg.pts)})));
+}
+function setFocus(p){
+  focusP=(p==null||focusP===String(p))?null:String(p);
+  document.querySelectorAll('#followBtns button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.p===focusP));
+  $('followHint').textContent=focusP?'Stai seguendo '+focusP+' e il suo difensore. Toccalo di nuovo per vedere tutti.':'Tocca un giocatore per seguire solo lui';
+  drawFocusPath(); applyFocus();
+}
+function defPos(n,tt){
+  const list=[{t:-1,r:{g:n}},...(M.defs[n]||[])]; let i=0;
+  while(i+1<list.length&&list[i+1].t<=tt) i++;
+  const cur=evalRule(list[i].r,tt); if(i===0) return cur;
+  const f=Math.min(1,(tt-list[i].t)/.7); return lerp(evalRule(list[i-1].r,tt),cur,ease(f));
+}
+const phaseOf = tt => {let i=0;M.phases.forEach((ph,k)=>{if(k===0||tt>ph.start+1e-4)i=k;});return i;};
+
+function drawTrails(i){
+  const g=$('trails'); g.replaceChildren();
+  M.phases[i].drawn.forEach(a=>{
+    const grp=mk('g',{class:'tr-g'}); grp.dataset.t0=a.t0; grp.dataset.who=a.k==='pass'||a.k==='shot'?[a.from,a.to].join(','):String(a.p);
+    if(a.k==='shot'){
+      const A=posOf(a.from,a.t0),B=[0,1.575];
+      grp.append(mk('path',{class:'tr shot',d:dStr(trim([A,B],PR+.05,.3)),'marker-end':'url(#ahs)'}));
+    }else if(a.k==='pass'){
+      const A=posOf(a.from,a.t0),B=posOf(a.to,a.t1);
+      grp.append(mk('path',{class:'tr pass',d:dStr(trim([A,B],PR+.05,PR+.08)),'marker-end':'url(#ah)'}));
+    }else if(a.k==='screen'){
+      const p=trim(a.pts,PR,PR+.02),e=p[p.length-1],q=p[Math.max(0,p.length-2)];
+      const dx=e[0]-q[0],dy=e[1]-q[1],n=Math.hypot(dx,dy)||1,nx=-dy/n*.3,ny=dx/n*.3;
+      grp.append(mk('path',{class:'tr',d:dStr(p)+` M${(e[0]+nx).toFixed(3)} ${(e[1]+ny).toFixed(3)} L${(e[0]-nx).toFixed(3)} ${(e[1]-ny).toFixed(3)}`}));
+    }else{
+      let p=trim(a.pts,PR,PR+.06); if(a.k==='dribble') p=zig(p);
+      grp.append(mk('path',{class:'tr',d:dStr(p),'marker-end':'url(#ah)'}));
+    }
+    g.append(grp);
+  });
+}
+function renderList(){
+  const ol=$('phaseList'); ol.replaceChildren();
+  M.phases.forEach((ph,i)=>{
+    const li=document.createElement('li'),b=document.createElement('button');
+    b.innerHTML=`<span class="n">${i}</span><span><span class="t"></span><span class="d"></span></span>`;
+    b.querySelector('.t').textContent=txt(ph.title); b.querySelector('.d').textContent=txt(ph.text);
+    b.addEventListener('click',()=>playPhase(i)); li.append(b); ol.append(li);
+  });
+}
+function render(){
+  const i=phaseOf(t);
+  if(i!==curPhase){
+    curPhase=i; drawTrails(i); $('tabFasiSub').textContent='Fase '+i+' di '+(M.phases.length-1)+': '+txt(M.phases[i].title);
+    [...$('phaseList').children].forEach((li,k)=>li.classList.toggle('cur',k===i));
+    $('nowN').textContent=i; $('nowT').textContent=txt(M.phases[i].title)+'. '+txt(M.phases[i].text);
+  }
+  $('trails').querySelectorAll('.tr-g').forEach(g=>g.classList.toggle('later',t<+g.dataset.t0));
+  for(const p in play.start){const q=posOf(p,t);$('pl'+p).setAttribute('transform',`translate(${q[0].toFixed(3)} ${q[1].toFixed(3)})`);}
+  if(showDef) for(const p in play.start){const q=defPos(p,t);$('df'+p).setAttribute('transform',`translate(${q[0].toFixed(3)} ${q[1].toFixed(3)})`);}
+  applyFocus();
+  const b=ballPos(t); $('ball').setAttribute('cx',b[0].toFixed(3)); $('ball').setAttribute('cy',b[1].toFixed(3));
+  $('scrub').value=t;
+}
+function setPlaying(v){
+  playing=v; $('playLbl').textContent=v?'Pausa':'Play'; $('bPlay').setAttribute('aria-label',v?'Pausa':'Play');
+  $('playIco').innerHTML=v?'<path d="M3 2h4v12H3zM9 2h4v12H9z"/>':'<path d="M4 2v12l10-6z"/>';
+}
+function playPhase(i){i=Math.max(0,Math.min(M.phases.length-1,i));t=M.phases[i].start+(i?2e-4:0);stopAt=loopOn?null:M.phases[i].end;loopPh=i;setPlaying(true);render();}
+
+function renderVariants(raw){
+  $('varBox').hidden=!raw.variants; if(!raw.variants) return;
+  const dif=ctrl==='difesa', v=raw.variants[vi];
+  document.querySelectorAll('#ctrlSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===ctrl));
+  $('ctrlHint').textContent=dif?'Scegli come la difesa si comporta sui blocchi e guarda come si sviluppa l’azione.':'Scegli la lettura e guarda come si sviluppa l’azione. La difesa si adegua da sola.';
+  $('modeBox').classList.toggle('locked',!dif); $('varBox').classList.toggle('locked',dif);
+  $('modeH').textContent=dif?'Difesa sui blocchi':'Come difende la difesa';
+  $('varH').textContent=dif?'Cosa succede':'Lettura della difesa';
+  const mb=$('modeBox'), vb=$('varBox');
+  if(dif&&vb.nextElementSibling!==null&&mb.compareDocumentPosition(vb)&Node.DOCUMENT_POSITION_PRECEDING) vb.parentNode.insertBefore(mb,vb);
+  if(!dif&&mb.compareDocumentPosition(vb)&Node.DOCUMENT_POSITION_FOLLOWING) mb.parentNode.insertBefore(vb,mb);
+  const box=$('varChips'); box.replaceChildren();
+  raw.variants.forEach((vr,k)=>{const b=document.createElement('button');b.textContent=txt(vr.name);b.setAttribute('aria-pressed',k===vi);b.disabled=dif;
+    b.addEventListener('click',()=>{if(ctrl!=='lettura')return;vi=k;loadPlay(raw.id);const k0=raw.phases.length-1;t=M.phases[k0].start+2e-4;stopAt=null;loopPh=null;setPlaying(true);render();});box.append(b);});
+  $('varDesc').textContent=(dif?'\u201c'+txt(v.name)+'\u201d. ':'')+txt(v.desc); if(typeof updateTabs==='function') setTimeout(updateTabs,0);
+  const shown=dif?gMode:(v.mode||null);
+  document.querySelectorAll('#modeSeg button').forEach(b=>{b.setAttribute('aria-pressed',b.dataset.m===shown);b.disabled=!dif;});
+  if(dif){
+    const exact=v.mode===gMode;
+    $('modeHint').textContent=MODES[gMode][0]+': '+MODES[gMode][1]+' Vale per tutti i blocchi dello schema.'+(exact?'':' In questo schema non cambia il finale: l’azione prosegue come con “Segue”.');
+  }else{
+    $('modeHint').textContent=v.mode?'Con questa lettura la difesa sui blocchi è: '+MODES[v.mode][0]+'.':'Questa lettura non dipende da come si difende il blocco: sui blocchi la difesa segue.';
+  }
+}
+function loadPlay(id){
+  const raw=PLAYS.find(p=>p.id===id)||PLAYS[0];
+  if(!raw.variants) vi=0; else vi=Math.min(vi,raw.variants.length-1);
+  if(raw.variants&&ctrl==='difesa'){let k=raw.variants.findIndex(v=>v.mode===gMode);if(k<0)k=raw.variants.findIndex(v=>v.mode==='segue');vi=Math.max(0,k);}
+  const vv=raw.variants?raw.variants[vi]:null;
+  const base=vv?{...raw,phases:[...raw.phases,...vv.phases],def:[...(raw.def||[]),...(vv.def||[])],readMode:vv.mode,readNoBump:vv.nobump}:raw;
+  play=oriented(base); renderVariants(raw); M=build(play); buildDefense(); $('sideBox').hidden=!base.mirror; $('sideLbl').textContent=raw.sideLabel||'Lato';
+  $('playName').textContent=play.name; $('playNote').textContent=txt(play.note||'');
+  const dg=$('defs'); dg.replaceChildren(); dg.style.display=showDef?'':'none';
+  Object.keys(play.start).forEach(p=>{const e=mk('g',{class:'df',id:'df'+p});e.append(mk('circle',{r:DR}));const tx=mk('text',{y:.01});tx.textContent='X'+p;e.append(tx);dg.append(e);});
+  const g=$('players'); g.replaceChildren();
+  Object.keys(play.start).forEach(p=>{const e=mk('g',{class:'pl',id:'pl'+p});e.addEventListener('click',()=>setFocus(p));e.append(mk('circle',{r:PR}));const tx=mk('text',{y:.02});tx.textContent=p;e.append(tx);g.append(e);});
+  const fb=$('followBtns'); if(!fb.children.length) Object.keys(play.start).sort().forEach(p=>{const b=document.createElement('button');b.dataset.p=p;b.textContent=p;b.setAttribute('aria-pressed','false');b.setAttribute('aria-label','Segui il giocatore '+p);b.addEventListener('click',()=>setFocus(p));fb.append(b);});
+  $('scrub').max=M.total; t=0; stopAt=null; loopPh=null; curPhase=-1; setPlaying(false); renderList(); drawFocusPath(); render();
+}
+
+let last=performance.now();
+function loop(now){
+  const dt=Math.min(.05,(now-last)/1000); last=now;
+  if(playing){
+    if(loopOn&&loopPh==null) loopPh=phaseOf(t);
+    t+=dt*speed;
+    if(loopOn){const ph=M.phases[loopPh]; if(t>=ph.end) t=ph.start+(loopPh?2e-4:0); stopAt=null;}
+    else{
+      if(stopAt!==null&&t>=stopAt){t=stopAt;stopAt=null;setPlaying(false);}
+      if(t>=M.total){t=M.total;setPlaying(false);}
+    }
+    render();
+  }
+  requestAnimationFrame(loop);
+}
+
+PLAYS.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.name;$('playSel').append(o);});
+$('playSel').addEventListener('change',e=>{vi=0;loadPlay(e.target.value);});
+function setSide(f){flip=f;$('sideR').setAttribute('aria-pressed',!f);$('sideL').setAttribute('aria-pressed',f);loadPlay($('playSel').value);}
+$('sideR').addEventListener('click',()=>setSide(false));
+document.querySelectorAll('#modeSeg button').forEach(b=>b.addEventListener('click',()=>{
+  if(ctrl!=='difesa') return;
+  gMode=b.dataset.m; try{localStorage.setItem('lavagna-mode',gMode);}catch(e){}
+  loadPlay($('playSel').value); stopAt=null; setPlaying(true);
+}));
+document.querySelectorAll('#ctrlSeg button').forEach(b=>b.addEventListener('click',()=>{
+  if(ctrl===b.dataset.c) return;
+  ctrl=b.dataset.c; try{localStorage.setItem('lavagna-ctrl',ctrl);}catch(e){}
+  loadPlay($('playSel').value);
+}));
+function applyDef(){$('bDef').setAttribute('aria-pressed',showDef);$('defs').style.display=showDef?'':'none';render();}
+$('bDef').addEventListener('click',()=>{showDef=!showDef;try{localStorage.setItem('lavagna-def',showDef?'1':'0');}catch(e){}applyDef();});
+$('sideL').addEventListener('click',()=>setSide(true));
+$('bPlay').addEventListener('click',()=>{if(playing){setPlaying(false);return;} if(!loopOn&&t>=M.total-1e-3)t=0; stopAt=null; setPlaying(true);});
+$('bLoop').addEventListener('click',()=>{loopOn=!loopOn;$('bLoop').setAttribute('aria-pressed',loopOn);if(loopOn){loopPh=phaseOf(t);const ph=M.phases[loopPh];if(t>=ph.end-1e-3)t=ph.start+(loopPh?2e-4:0);stopAt=null;setPlaying(true);}});
+$('bRestart').addEventListener('click',()=>{t=0;stopAt=null;setPlaying(false);render();});
+$('bNext').addEventListener('click',()=>{const i=phaseOf(t),ph=M.phases[i];playPhase(t>=ph.end-HOLD-1e-3?i+1:i);});
+$('bPrev').addEventListener('click',()=>{const i=phaseOf(t);let k=(t-M.phases[i].start<.3)?i-1:i;k=Math.max(0,k);t=M.phases[k].start+(k?2e-4:0);stopAt=null;loopPh=k;setPlaying(false);render();});
+$('scrub').addEventListener('input',e=>{t=+e.target.value;stopAt=null;loopPh=null;setPlaying(false);render();});
+const SPEEDS=[1,1.5,0.5];$('bSpeed').addEventListener('click',()=>{speed=SPEEDS[(SPEEDS.indexOf(speed)+1)%3];$('bSpeed').textContent=String(speed).replace('.',',')+'\u00d7';});
+document.addEventListener('keydown',e=>{
+  if(e.target.closest('select,input'))return;
+  if(e.key===' '){e.preventDefault();$('bPlay').click();}
+  else if(e.key==='ArrowRight')$('bNext').click();
+  else if(e.key==='ArrowLeft')$('bPrev').click();
+});
+
+function openSheet(sec){
+  const sh=$('sheet'); sh.dataset.sec=sec; $('sheetTitle').textContent=sec==='fasi'?'Fasi dello schema':'Difesa e lettura';
+  document.body.classList.add('sheet-open'); sh.classList.add('open'); $('scrim').classList.add('on'); sh.scrollTop=0;
+  const top=$('court').getBoundingClientRect().top+window.scrollY-8; window.scrollTo(0,top);
+}
+function closeSheet(){ $('sheet').classList.remove('open'); $('scrim').classList.remove('on'); document.body.classList.remove('sheet-open'); }
+document.querySelectorAll('#tabbar button').forEach(b=>b.addEventListener('click',()=>openSheet(b.dataset.sec)));
+$('sheetClose').addEventListener('click',closeSheet);
+$('scrim').addEventListener('click',closeSheet);
+function updateTabs(){
+  const raw=PLAYS.find(p=>p.id===$('playSel').value); if(!raw||!raw.variants) return;
+  $('tabOptsSub').textContent=ctrl==='difesa'?'Difesa: '+MODES[gMode][0]:'Lettura: '+txt(raw.variants[vi].name);
+}
+loadPlay('trans'); applyDef(); if(!window.matchMedia('(max-width:840px)').matches) $('legendBox').open=true;
+requestAnimationFrame(loop);
+</script>
+<script>if ('serviceWorker' in navigator) { addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {})); }</script>
+</body></html>
